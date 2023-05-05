@@ -1,0 +1,116 @@
+#define BLYNK_PRINT Serial
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+/////////////////
+#define BLYNK_TEMPLATE_ID "TMPL3otirvfSV";
+#define BLYNK_TEMPLATE_NAME "smart glouse";
+#define BLYNK_AUTH_TOKEN "d0Asj6gmyGFWT3HrI9Hwxl-haRzuZoRd";
+/////////////////////
+char ssid[ ] = "sans";
+char pass[ ] = "12345678";
+char auth[ ] ="d0Asj6gmyGFWT3HrI9Hwxl-haRzuZoRd";
+////////////////////
+#define button 23
+#define v1 13
+#define v2 14
+#define v3 27
+////////////////////
+int b;
+int i,f1,f2,f3;
+int sum1=0,sum2=0,sum3=0;
+int avg1,avg2,avg3;
+void setup() 
+{
+  Serial.begin(9600);
+  ///////////////////
+  Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
+  ///////////////////
+  pinMode(button,INPUT_PULLUP);
+  ///////////////////
+  pinMode(v1,OUTPUT);
+  pinMode(v2,OUTPUT);
+  pinMode(v3,OUTPUT);
+  digitalWrite(v1,HIGH);
+  digitalWrite(v2,HIGH);
+  digitalWrite(v3,HIGH);
+  
+}
+
+void loop() 
+{
+Blynk.run();  
+/////////////
+b=digitalRead(button);
+/////////////
+if(b==0)
+{
+   Blynk.virtualWrite(V0,"ALERT!!!!");
+}
+else
+{
+   Blynk.virtualWrite(V0," ");
+}
+for(i=0;i<=100;i++)
+{
+  f1=analogRead(34);
+  sum1=sum1+f1;
+}
+avg1=sum1/100;
+sum1=0;
+for(i=0;i<=100;i++)
+{
+  f2=analogRead(35);
+  sum2=sum2+f2;
+}
+avg2=sum2/100;
+sum2=0;
+for(i=0;i<=100;i++)
+{
+ f3=analogRead(32);
+ sum3=sum3+f3; 
+}
+avg3=sum3/100;
+sum3=0;
+//Serial.print("f1=");
+//Serial.print(avg1);
+//Serial.print(" ");
+//Serial.print("f2=");
+//Serial.print(avg2);
+//Serial.print(" ");
+//Serial.print("f3=");
+//Serial.println(avg3);
+if(avg1<1500)
+
+{
+  Serial.println("I NEED FOOD");
+  digitalWrite(v1,LOW);
+}
+else
+{
+  digitalWrite(v1,HIGH);
+}
+///////////////////////
+if(avg2<1000)
+{
+  Serial.println("I NEED HELP");
+  digitalWrite(v2,LOW);
+}
+else
+{
+  digitalWrite(v2,HIGH);
+}
+///////////////////////
+if(avg3<1100)
+{
+  Serial.println("I NEED MEDICINE");
+  digitalWrite(v3,LOW);
+}
+else
+{
+  digitalWrite(v3,HIGH);
+}
+delay(300); 
+
+
+}
